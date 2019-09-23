@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import { Redirect } from "react-router-dom";
 import { auth } from "./../firebase-config";
 
 class login extends Component {
@@ -8,7 +8,7 @@ class login extends Component {
 
     this.state = {
       estaAutenticado: false,
-      estaLogando: true,
+      estaLogando: false,
       erro: false
     };
     this.email = null;
@@ -16,20 +16,27 @@ class login extends Component {
     this.autenticaUsuario = this.autenticaUsuario.bind(this);
   }
   autenticaUsuario() {
-    this.setState({ estaAutenticado: true, error: false });
+    this.setState({ estaLogando: true, error: false });
     auth
       .signInWithEmailAndPassword(this.email.value, this.senha.value)
       .then(user => {
         console.log("Usuário Logado", user);
-        this.setState({ estaLogando: true });
+        this.setState({ estaAutenticado: true });
       })
       .catch(err => {
         console.log("erro", err);
-        this.setState({ erro: true, estaLogando: false });
+        this.setState({
+          erro: true,
+          estaAutenticado: false,
+          estaLogando: false
+        });
       });
   }
 
   render() {
+    if (this.state.estaAutenticado) {
+      return <Redirect to="/admin" />;
+    }
     return (
       <div className="container">
         <h1>login</h1>
@@ -66,6 +73,7 @@ class login extends Component {
           type="button"
           className="btn btn-primary"
           onClick={this.autenticaUsuario}
+          disabled={this.state.estaLogando}
         >
           Enviar
         </button>
@@ -75,4 +83,3 @@ class login extends Component {
 }
 
 export default login;
-6:17

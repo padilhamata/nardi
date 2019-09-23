@@ -5,25 +5,37 @@ import config, { storage } from "./../firebase-config";
 class AdminPortfolio extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      estaGravando: false
+    };
+
     this.gravaPortfolio = this.gravaPortfolio.bind(this);
   }
 
   gravaPortfolio(e) {
-    const arquivo = this.imagem.files[0];
+    const itemPortifolio = {
+      titulo: this.titulo.value,
+      descricao: this.descricao.value,
+      imagem: this.imagem
+    };
+    this.setState({ estaGravando: true });
+    const arquivo = itemPortifolio.imagem.files[0];
     const { name, size, type } = arquivo;
 
     const ref = storage.ref(name);
     ref.put(arquivo).then(img => {
       img.ref.getDownloadURL().then(downloadURL => {
         const novoPortfolio = {
-          titulo: this.titulo.value,
-          descricao: this.descricao.value,
+          titulo: itemPortifolio.titulo,
+          descricao: itemPortifolio.descricao,
           imagem: downloadURL
         };
 
         config.push("portfolio", {
           data: novoPortfolio
         });
+        this.setState({ estaGravando: false });
       });
     });
 
@@ -31,6 +43,15 @@ class AdminPortfolio extends Component {
   }
 
   render() {
+    if (this.state.estaGravando) {
+      return (
+        <div className="container">
+          <p>
+            <span class="glyphicon glyphicon-refresh"></span> aguarde ...{" "}
+          </p>
+        </div>
+      );
+    }
     return (
       <div style={{ padding: "120px" }}>
         <h2>Portfolio - Area Administrativa</h2>

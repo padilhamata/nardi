@@ -4,8 +4,8 @@ const Cabecalho = props => {
   return (
     <div>
       <div className="jumbotron text-center">
-        <h1>Company</h1>
-        <p>We specialize in blablabla</p>
+        <h1>Curso de React.js</h1>
+        <p>Feito pelo Lucas</p>
         <form>
           <div className="input-group">
             <input
